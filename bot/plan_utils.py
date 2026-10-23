@@ -52,9 +52,9 @@ PREMIUM_BENEFITS = (
 
 PREMIUM_PRICING = (
     "<b>💲 Pricing:</b>\n"
-    "• <b>1 Month Plan:</b> ₹50 / $1\n"
-    "• <b>3 Month Plan:</b> ₹120 / $2.5 (Save 20%)\n"
-    "• <b>Lifetime Access:</b> ₹200 / $4"
+    "• <b>1 Week Plan:</b> ₹50 / $0.5\n"
+    "• <b>1 Month Plan:</b> ₹150/ $1.5 (Save 25%)\n"
+    "• <b>3 Month Plan:</b> ₹300 / $3 (save 50%)"
 )
 
 
@@ -72,7 +72,6 @@ def free_start_caption(user) -> str:
     return (
         f"<b>Hey {mention(user)} 👋</b>\n\n"
         "<b>I'm Advanced YouTube Uploader Bot.</b>\n"
-        "I upload any Telegram video straight to your YouTube channel.\n\n"
         "<b>👤 Your Plan: Free</b>\n"
         "🔒 Uploading is locked for Free plan users. Get Premium to unlock it.\n\n"
         "<b>⚙️ How it works:</b>\n"
@@ -90,6 +89,7 @@ FREE_NOTICE = (
     "<b>🔒 This feature is only for Premium users.</b>\n\n"
     "You are on the <b>Free</b> plan. Send /premium to see the plans or /myplan to "
     "check your plan."
+    "Contact: @SmartBoy_ApnaMS ."
 )
 
 
@@ -130,7 +130,7 @@ def myplan_text(user) -> str:
             f"<b>🟢 Activated From:</b> <code>{start_text}</code>\n"
             f"<b>📅 Valid Till:</b> <code>{end_text}</code>\n"
             f"{left}\n"
-            "<b>🚀 YouTube Uploads:</b> Unlocked\n"
+            "<b>🚀 YouTube Uploads:</b> ✅ Unlocked \n"
         )
     else:
         body = (
