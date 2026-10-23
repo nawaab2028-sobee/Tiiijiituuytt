@@ -16,3 +16,16 @@ class UtubeBot(Client):
         self.DOWNLOAD_WORKERS = 15
         self.counter = 0
         self.download_controller = {}
+
+    async def start(self):
+        await super().start()
+        # Force Subscribe: start the "user left a channel" sweep (never blocks startup)
+        try:
+            from .plugins import forcesub
+
+            forcesub.start_background(self)
+        except Exception as e:
+            import logging
+
+            logging.getLogger(__name__).error(f"[ForceSub] background start failed: {e}")
+        return self

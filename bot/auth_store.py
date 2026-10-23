@@ -10,6 +10,7 @@ existing behaviour keeps working exactly as before.
 
 import json
 import logging
+from datetime import datetime, timedelta, timezone
 
 from pyrogram import filters as Filters
 
@@ -19,6 +20,7 @@ log = logging.getLogger(__name__)
 
 AUTH_FILE = "auth_users.json"
 BROADCAST_FILE = "broadcast_users.json"
+AUTH_META_FILE = "auth_meta.json"   # per user: when the access started / when it ends
 
 
 def _load_set(path: str) -> set:
@@ -45,18 +47,76 @@ auth_users: set = _load_set(AUTH_FILE) | set(Config.AUTH_USERS)
 broadcast_users: set = _load_set(BROADCAST_FILE)
 
 
+def _load_meta() -> dict:
+    try:
+        with open(AUTH_META_FILE, "r") as f:
+            data = json.load(f)
+            return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def _save_meta() -> None:
+    try:
+        with open(AUTH_META_FILE, "w") as f:
+            json.dump(auth_meta, f)
+    except Exception as e:
+        log.error(f"Failed saving {AUTH_META_FILE}: {e}")
+
+
+# {"<user_id>": {"start": iso-utc, "expiry": iso-utc | None}}
+# A user in auth_users without an entry here has permanent access (old behaviour).
+auth_meta: dict = _load_meta()
+
+
+def _parse(value):
+    if not value:
+        return None
+    try:
+        dt = datetime.fromisoformat(value)
+        return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+    except Exception:
+        return None
+
+
 def is_auth(user_id: int) -> bool:
-    return user_id in auth_users
+    if user_id not in auth_users:
+        return False
+    meta = auth_meta.get(str(user_id))
+    expiry = _parse(meta.get("expiry")) if meta else None
+    if expiry is not None and datetime.now(timezone.utc) >= expiry:
+        # the time-limited access has ended -> remove it automatically
+        auth_users.discard(user_id)
+        auth_meta.pop(str(user_id), None)
+        _save_set(AUTH_FILE, auth_users)
+        _save_meta()
+        return False
+    return True
 
 
-def add_auth(user_id: int) -> None:
+def add_auth(user_id: int, days: int = 0) -> None:
+    """days > 0 = access for that many days, days == 0 = permanent."""
+    now = datetime.now(timezone.utc)
     auth_users.add(user_id)
+    auth_meta[str(user_id)] = {
+        "start": now.isoformat(),
+        "expiry": (now + timedelta(days=days)).isoformat() if days and days > 0 else None,
+    }
     _save_set(AUTH_FILE, auth_users)
+    _save_meta()
 
 
 def remove_auth(user_id: int) -> None:
     auth_users.discard(user_id)
+    auth_meta.pop(str(user_id), None)
     _save_set(AUTH_FILE, auth_users)
+    _save_meta()
+
+
+def get_auth_info(user_id: int):
+    """(start, expiry) as aware UTC datetimes; either can be None."""
+    meta = auth_meta.get(str(user_id)) or {}
+    return _parse(meta.get("start")), _parse(meta.get("expiry"))
 
 
 def get_auth_users() -> set:

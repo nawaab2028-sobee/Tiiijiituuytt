@@ -52,3 +52,31 @@ class Config:
     UPLOAD_MODE = os.environ.get("UPLOAD_MODE", "unlisted")
 
     CRED_FILE = os.environ.get("CRED_FILE", "auth_token.txt")
+
+    # ─── Force Subscribe ──────────────────────────────────────────────────────
+    # True  = every user must join ALL the channels below before using the bot
+    # False = force subscribe is off
+    FORCE_SUB_ENABLED = os.environ.get("FORCE_SUB_ENABLED", "True").lower() == "true"
+
+    # True = the owner does not have to join
+    FORCE_SUB_EXEMPT_OWNER = os.environ.get("FORCE_SUB_EXEMPT_OWNER", "True").lower() == "true"
+
+    # Every N seconds the bot re-checks saved members to catch users who left a
+    # channel (backup for the instant leave detection). 0 = off.
+    FORCE_SUB_SWEEP_SECONDS = int(os.environ.get("FORCE_SUB_SWEEP_SECONDS", "60"))
+
+    # Every channel has 3 fields:
+    #   title   -> name shown on the button / in messages
+    #   link    -> channel link (fallback, the bot also creates personal invite links)
+    #   chat_id -> channel id (the "-100..." one). The bot must be ADMIN in that channel.
+    # A channel whose chat_id is still the "-100XXXXXXXXXX" placeholder is ignored.
+    FORCE_SUB_CHANNELS = [
+        {"title": "Channel 1", "link": "https://t.me/your_channel_1", "chat_id": "-100XXXXXXXXXX"},
+        {"title": "Channel 2", "link": "https://t.me/your_channel_2", "chat_id": "-100XXXXXXXXXX"},
+    ]
+
+    # Where users contact the owner to buy Premium
+    ADMIN_CONTACT_URL = os.environ.get("ADMIN_CONTACT_URL", "https://t.me/SmartBoy_ApnaMS")
+
+    # "How to Login??" button on /login
+    LOGIN_GUIDE_URL = os.environ.get("LOGIN_GUIDE_URL", "https://t.me/TGtoYt_Guidance/5")
