@@ -38,14 +38,14 @@ class Config:
 
     VIDEO_DESCRIPTION = os.environ.get(
         "VIDEO_DESCRIPTION",
-        "Uploaded By Smarty Brother. Only For Education Purpose!",
+        "❤️",
     )
 
     VIDEO_CATEGORY = os.environ.get("VIDEO_CATEGORY", "")
 
     VIDEO_TITLE_PREFIX = os.environ.get("VIDEO_TITLE_PREFIX", "")
 
-    VIDEO_TITLE_SUFFIX = os.environ.get("VIDEO_TITLE_SUFFIX", "—MS Bro")
+    VIDEO_TITLE_SUFFIX = os.environ.get("VIDEO_TITLE_SUFFIX", "")
 
     DEBUG = bool(os.environ.get("DEBUG", ""))
 
@@ -71,12 +71,12 @@ class Config:
     #   chat_id -> channel id (the "-100..." one). The bot must be ADMIN in that channel.
     # A channel whose chat_id is still the "-100XXXXXXXXXX" placeholder is ignored.
     FORCE_SUB_CHANNELS = [
-        {"title": "Channel 1", "link": "https://t.me/your_channel_1", "chat_id": "-100XXXXXXXXXX"},
-        {"title": "Channel 2", "link": "https://t.me/your_channel_2", "chat_id": "-100XXXXXXXXXX"},
+        {"title": "Team Nawaab", "link": "https://t.me/TeamNawaab", "chat_id": "-1003330631655"},
+        {"title": "Team Cinderella", "link": "https://t.me/TeamCinderella", "chat_id": "-1003855447385"},
     ]
 
     # Where users contact the owner to buy Premium
     ADMIN_CONTACT_URL = os.environ.get("ADMIN_CONTACT_URL", "https://t.me/SmartBoy_ApnaMS")
 
     # "How to Login??" button on /login
-    LOGIN_GUIDE_URL = os.environ.get("LOGIN_GUIDE_URL", "https://t.me/TGtoYt_Guidance/5")
+    LOGIN_GUIDE_URL = os.environ.get("LOGIN_GUIDE_URL", "https://t.me/TeamNawaab/24")
