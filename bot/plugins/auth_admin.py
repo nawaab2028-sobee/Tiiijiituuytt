@@ -5,7 +5,8 @@ from pyrogram.types import Message
 
 from ..utubebot import UtubeBot
 from ..config import Config
-from ..auth_store import add_auth, remove_auth, get_auth_users
+from ..auth_store import add_auth, remove_auth, get_auth_users, get_auth_info
+from ..plan_utils import fmt_ist
 
 
 log = logging.getLogger(__name__)
@@ -18,17 +19,34 @@ owner_filter = Filters.create(lambda _, __, m: bool(m.from_user) and m.from_user
 )
 async def _addauth(c: UtubeBot, m: Message):
     if len(m.command) < 2:
-        await m.reply_text("Usage: /addauth user_id", True)
+        await m.reply_text(
+            "Usage: /addauth user_id days\n\n"
+            "Days defaults to 7 if not given. Use 0 for permanent access.",
+            True,
+        )
         return
     try:
         uid = int(m.command[1])
+        days = int(m.command[2]) if len(m.command) > 2 else 7
     except ValueError:
-        await m.reply_text("Invalid user id.", True)
+        await m.reply_text("Invalid user id or days. Both must be numbers.", True)
+        return
+    if days < 0:
+        await m.reply_text("Days can not be negative.", True)
         return
 
-    add_auth(uid)
+    add_auth(uid, days)
+    start, expiry = get_auth_info(uid)
+    if expiry is None:
+        duration = "Permanent"
+        expires = "Never (Lifetime)"
+    else:
+        duration = f"{days} day(s)"
+        expires = fmt_ist(expiry)
     await m.reply_text(
-        f"✅ User `{uid}` added to authorised list.\nNow this user can use this bot.",
+        f"✅ User `{uid}` added to authorised list.\nNow this user can use this bot.\n\n"
+        f"**Duration:** {duration}\n"
+        f"**Expires:** {expires}",
         True,
     )
 

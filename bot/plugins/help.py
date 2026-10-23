@@ -75,6 +75,9 @@ async def _login(c: UtubeBot, m: Message):
     await m.reply_text(
         text=tr.LOGIN_MSG,
         reply_markup=InlineKeyboardMarkup(
-            [[InlineKeyboardButton(text="Authentication URL", url=url)]]
+            [
+                [InlineKeyboardButton(text="Authentication URL", url=url)],
+                [InlineKeyboardButton(text="How to Login??", url=Config.LOGIN_GUIDE_URL)],
+            ]
      )
 )
